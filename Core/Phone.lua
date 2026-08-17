@@ -836,6 +836,36 @@ task.spawn(function()
     end
 end)
 
+-- ==================== DRAG PHONE ====================
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+sb.Active = true
+sb.InputBegan:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = inp.Position
+        startPos = phone.Position
+    end
+end)
+
+sb.InputEnded:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+Services.UserInputService.InputChanged:Connect(function(inp)
+    if dragging and (inp.UserInputType == Enum.UserInputType.Touch or inp.UserInputType == Enum.UserInputType.MouseMovement) then
+        local delta = inp.Position - dragStart
+        phone.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
 -- ==================== EXPORT ====================
 return {
     gui              = gui,

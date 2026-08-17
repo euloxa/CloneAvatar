@@ -104,8 +104,9 @@ local function createFloatingIcon()
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             isDragging = true
             clickMoved = false
-            dragStart = input.Position
-            iconStartPos = container.AbsolutePosition
+            dragStart = UserInputService:GetMouseLocation()
+            iconStartPos = container.Position
+            tween(phoneBody, {Size = UDim2.new(0, 46, 0, 82)}, 0.1)
         end
     end)
 
@@ -119,15 +120,16 @@ local function createFloatingIcon()
         if not isDragging then return end
         
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            local delta = input.Position - dragStart
+            local mousePos = UserInputService:GetMouseLocation()
+            local delta = mousePos - dragStart
             
             if math.abs(delta.X) > 5 or math.abs(delta.Y) > 5 then
                 clickMoved = true
             end
             
             if clickMoved then
-                local newX = iconStartPos.X + delta.X
-                local newY = iconStartPos.Y + delta.Y
+                local newX = iconStartPos.X.Offset + delta.X
+                local newY = iconStartPos.Y.Offset + delta.Y
                 
                 local cam = Services.Workspace.CurrentCamera
                 if cam then
@@ -140,6 +142,7 @@ local function createFloatingIcon()
             end
         end
     end)
+
 
     -- Hover
     btn.MouseEnter:Connect(function()
