@@ -2,7 +2,7 @@
 -- PHONE ID VIEWER - Modular Loader (FIXED)
 -- ================================================
 
-local BASE_URL = "https://raw.githubusercontent.com/AlfreadRorw/AvatarClone/main/"
+local BASE_URL = "https://raw.githubusercontent.com/euloxa/CloneAvatar/main/"
 
 local function Load(path)
     local ok, result = pcall(function()
@@ -108,7 +108,6 @@ local AppList = {
     {path = "Applications/Command.lua", name = "Command"},
     {path = "Applications/Settings.lua", name = "Settings"},
     {path = "Applications/Premium.lua", name = "Premium"},
-    {path = "Applications/AlfreadAI.lua", name = "AlfreadAI"},
     {path = "Applications/Shader.lua", name = "Shader"},
     
 }
