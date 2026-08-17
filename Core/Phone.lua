@@ -44,7 +44,7 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Name = "PhoneGUI"
 gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
+gui.IgnoreGuiInset = false
 gui.DisplayOrder = 998
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
@@ -75,7 +75,9 @@ phone.ClipsDescendants = true
 corner(phone, 38)
 stroke(phone, T.Accent or Color3.fromRGB(30, 30, 30), 2, 0.15)
 
-local PHONE_SIZE = UDim2.new(0, 320, 0, 560)
+local phoneScale = Instance.new("UIScale", phone)
+local PHONE_SIZE = UDim2.new(0, 320, 0, 560) -- Ukuran asli patokan
+local isLandscapeMode = nil
 
 local function isPortrait()
     local cam = Services.Workspace.CurrentCamera
@@ -86,6 +88,40 @@ end
 local function getGridIconSize()
     return isPortrait() and UDim2.new(0, 72, 0, 86) or UDim2.new(0, 68, 0, 78)
 end
+
+-- ==================== AUTO SCALE LANDSCAPE ====================
+local function applyPhoneOrientationSize()
+    local cam = Services.Workspace.CurrentCamera
+    if not cam then return end
+    local vp = cam.ViewportSize
+    if vp.X <= 0 or vp.Y <= 0 then return end
+    local landscape = vp.X > vp.Y
+    local safeScale = 1
+    if landscape then
+        safeScale = (vp.Y * 0.85) / 560
+        phone.Position = UDim2.new(0.5, 0, 0.5, 0)
+    else
+        safeScale = (vp.Y * 0.9) / 560
+        phone.Position = UDim2.new(0.5, 0, 0.52, 0)
+    end
+    
+    if safeScale > 1 then safeScale = 1 end
+    
+    isLandscapeMode = landscape
+    
+    if phone.Visible then 
+        Helpers.tween(phoneScale, {Scale = safeScale}, 0.3, Enum.EasingStyle.Quart)
+        Helpers.tween(phone, {Size = PHONE_SIZE, Position = phone.Position}, 0.3, Enum.EasingStyle.Quart) 
+    else
+        phoneScale.Scale = safeScale
+        phone.Size = PHONE_SIZE
+    end
+end
+
+Services.Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+    if phone.Visible then applyPhoneOrientationSize() end
+end)
+
 
 -- ==================== SCREEN AREA ====================
 local sa = Instance.new("Frame", phone)
@@ -711,12 +747,12 @@ end
 
 function _G.openPhone()
     if phone.Visible then return end
+    applyPhoneOrientationSize()
     phone.Visible = true
     phone.Size = UDim2.new(0,0,0,0)
-    tween(phone, {Size=PHONE_SIZE}, 0.32, Enum.EasingStyle.Back)
+    Helpers.tween(phone, {Size=PHONE_SIZE}, 0.32, Enum.EasingStyle.Back)
 
     if _G.PhoneState.isLocked then
-        -- Cek auto-login
         task.spawn(function()
             if Firebase and Firebase.CheckSavedKey then
                 local ok, isValid = pcall(function()
@@ -740,9 +776,10 @@ end
 
 function _G.closePhone()
     if not phone.Visible then return end
-    tween(phone, {Size=UDim2.new(0,0,0,0)}, 0.22)
+    Helpers.tween(phone, {Size=UDim2.new(0,0,0,0)}, 0.22)
     task.delay(0.22, function() phone.Visible = false end)
 end
+
 
 -- ==================== ONLINE PRESENCE ====================
 task.spawn(function()
