@@ -71,21 +71,21 @@ local function createFloatingIcon()
     phoneIconContainer.ZIndex = 5
     phoneIconContainer.Rotation = 45
 
-    local phoneBody = Instance.new("Frame", phoneIconContainer)
-    phoneBody.Size = UDim2.new(0, 10, 0, 16)
-    phoneBody.Position = UDim2.new(0.5, -5, 0.5, -8)
-    phoneBody.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    phoneBody.ZIndex = 6
-    corner(phoneBody, 3)
+        local innerPhoneIcon = Instance.new("Frame", phoneIconContainer)
+    innerPhoneIcon.Size = UDim2.new(0, 10, 0, 16)
+    innerPhoneIcon.Position = UDim2.new(0.5, -5, 0.5, -8)
+    innerPhoneIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    innerPhoneIcon.ZIndex = 6
+    corner(innerPhoneIcon, 3)
 
-    local speakerDot = Instance.new("Frame", phoneBody)
+    local speakerDot = Instance.new("Frame", innerPhoneIcon)
     speakerDot.Size = UDim2.new(0, 4, 0, 2)
     speakerDot.Position = UDim2.new(0.5, -2, 0, 2)
     speakerDot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     speakerDot.ZIndex = 7
     corner(speakerDot, 1)
 
-    local homeDot = Instance.new("Frame", phoneBody)
+    local homeDot = Instance.new("Frame", innerPhoneIcon)
     homeDot.Size = UDim2.new(0, 3, 0, 3)
     homeDot.Position = UDim2.new(0.5, -1.5, 1, -5)
     homeDot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
